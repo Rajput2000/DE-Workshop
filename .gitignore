@@ -1,5 +1,6 @@
 .venv/
 .vscode/
+.env_encoded
 *.parquet
 ny_taxi_postgres_data/
 secrets/
