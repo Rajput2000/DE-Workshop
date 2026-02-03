@@ -1,0 +1,21 @@
+id: nyc_taxi_parquet_scraper_batch
+namespace: homework
+description: |
+  Batch process yellow taxi data for months 01-06
+
+tasks:
+  - id: foreach_months
+    type: io.kestra.plugin.core.flow.ForEach
+    values: ["01", "02", "03", "04", "05", "06"]
+    tasks:
+      - id: process_month
+        type: io.kestra.plugin.core.flow.Subflow
+        namespace: homework
+        flowId: nyc_taxi_parquet_scraper
+        inputs:
+          taxi: yellow
+          year: "2024"
+          month: "{{taskrun.value}}"
+
+  - id: purge_files
+    type: io.kestra.plugin.core.storage.PurgeCurrentExecutionFiles

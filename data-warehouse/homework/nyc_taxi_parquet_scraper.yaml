@@ -1,0 +1,40 @@
+id: nyc_taxi_parquet_scraper
+namespace: homework
+description: |
+  Scrapes NYC TLC website for parquet files and uploads to GCS
+
+inputs:
+  - id: taxi
+    type: SELECT
+    displayName: Select taxi type
+    values: [yellow, green]
+    defaults: yellow
+
+  - id: year
+    type: STRING
+    displayName: Year
+    defaults: "2024"
+
+  - id: month
+    type: SELECT
+    displayName: Month
+    values: ["01", "02", "03", "04", "05", "06"]
+    defaults: "01"
+
+variables:
+  filename: "{{inputs.taxi}}_tripdata_{{inputs.year}}-{{inputs.month}}.parquet"
+  url: "https://d37ci6vzurychx.cloudfront.net/trip-data/{{vars.filename}}"
+  gcs_path: "gs://{{kv('GCP_BUCKET_NAME', 'zoomcamp')}}/{{vars.filename}}"
+
+tasks:
+  - id: download_and_upload
+    type: io.kestra.plugin.scripts.shell.Commands
+    containerImage: google/cloud-sdk:alpine
+    taskRunner:
+      type: io.kestra.plugin.scripts.runner.docker.Docker
+    commands:
+      - wget -O {{render(vars.filename)}} {{render(vars.url)}}
+      - echo '{{secret('GCP_SERVICE_ACCOUNT')}}' > /tmp/gcp-key.json
+      - gcloud auth activate-service-account --key-file=/tmp/gcp-key.json
+      - gsutil cp {{render(vars.filename)}} {{render(vars.gcs_path)}}
+      - rm /tmp/gcp-key.json {{render(vars.filename)}}

@@ -1,0 +1,25 @@
+id: create_bq_tables_from_parquet
+namespace: homework
+description: |
+  Create external and regular BigQuery tables from parquet files in GCS
+
+tasks:
+  - id: create_external_table
+    type: io.kestra.plugin.gcp.bigquery.Query
+    serviceAccount: "{{secret('GCP_SERVICE_ACCOUNT')}}"
+    projectId: "{{kv('GCP_PROJECT_ID', 'zoomcamp')}}"
+    sql: |
+      CREATE OR REPLACE EXTERNAL TABLE `{{kv('GCP_PROJECT_ID', 'zoomcamp')}}.{{kv('GCP_DATASET', 'zoomcamp')}}.yellow_tripdata_external`
+      OPTIONS (
+        format = 'PARQUET',
+        uris = ['gs://{{kv('GCP_BUCKET_NAME', 'zoomcamp')}}/yellow_tripdata_*.parquet']
+      );
+
+  - id: create_regular_table
+    type: io.kestra.plugin.gcp.bigquery.Query
+    serviceAccount: "{{secret('GCP_SERVICE_ACCOUNT')}}"
+    projectId: "{{kv('GCP_PROJECT_ID', 'zoomcamp')}}"
+    sql: |
+      CREATE OR REPLACE TABLE `{{kv('GCP_PROJECT_ID', 'zoomcamp')}}.{{kv('GCP_DATASET', 'zoomcamp')}}.yellow_tripdata`
+      AS
+      SELECT * FROM `{{kv('GCP_PROJECT_ID', 'zoomcamp')}}.{{kv('GCP_DATASET', 'zoomcamp')}}.yellow_tripdata_external`;
