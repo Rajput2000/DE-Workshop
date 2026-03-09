@@ -10,3 +10,10 @@ logs/runs
 logs/*.log
 __pycache__/
 *.py[cod]
+partitioned_data/
+*.parquet
+*.csv
+fhvhv/
+*.db
+*.gz
+.DS_Store

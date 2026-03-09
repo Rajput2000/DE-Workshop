@@ -3,13 +3,18 @@ name = "de-workshop"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 dependencies = [
+    "dlt[workspace]>=1.12.1",
     "dotenv>=0.9.9",
     "fastparquet>=2024.11.0",
+    "ibis-framework>=11.0.0",
+    "marimo>=0.17.6",
     "pandas>=2.3.3",
+    "plotly>=6.5.2",
     "psycopg2-binary>=2.9.11",
     "pyarrow>=21.0.0",
+    "pyspark>=4.1.1",
     "requests>=2.32.5",
     "sqlalchemy>=2.0.45",
     "tqdm>=4.67.1",
